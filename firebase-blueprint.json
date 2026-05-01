@@ -1,0 +1,42 @@
+{
+  "entities": {
+    "Prompt": {
+      "title": "Prompt",
+      "description": "Ready-made AI prompts for sale",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "fullPrompt": { "type": "string" },
+        "price": { "type": "string" },
+        "category": { "type": "string", "enum": ["Admin Panel", "Games", "E-commerce", "Tools"] },
+        "features": { "type": "array", "items": { "type": "string" } },
+        "tools": { "type": "array", "items": { "type": "string" } },
+        "image": { "type": "string" },
+        "isFree": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "description", "fullPrompt", "price", "category", "image"]
+    },
+    "User": {
+      "title": "User",
+      "description": "User profile and purchases",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string" },
+        "isAdmin": { "type": "boolean" },
+        "purchasedPrompts": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  },
+  "firestore": {
+    "prompts/{promptId}": {
+      "schema": "Prompt",
+      "description": "Collection of all prompts"
+    },
+    "users/{userId}": {
+      "schema": "User",
+      "description": "User information"
+    }
+  }
+}

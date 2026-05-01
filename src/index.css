@@ -1,0 +1,50 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Roboto", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Poppins", sans-serif;
+
+  --color-brand-primary: #8b5cf6;
+  --color-brand-secondary: #ec4899;
+  --color-bg-dark: #0f172a;
+  --color-bg-card: rgba(30, 41, 59, 0.7);
+}
+
+@layer base {
+  body {
+    @apply bg-bg-dark text-slate-100 font-sans;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply bg-bg-card backdrop-blur-xl border border-slate-700/50 shadow-2xl;
+  }
+  
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-brand-primary to-brand-secondary;
+  }
+  
+  .btn-primary {
+    @apply px-6 py-3 rounded-full font-semibold transition-all duration-300
+           bg-gradient-to-r from-brand-primary to-brand-secondary
+           hover:shadow-[0_0_20px_rgba(139,92,246,0.5)] active:scale-95;
+  }
+  
+  .btn-outline {
+    @apply px-6 py-3 rounded-full font-semibold transition-all duration-300
+           border border-slate-700 hover:bg-slate-800 active:scale-95;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-slate-700 rounded-full;
+  }
+}

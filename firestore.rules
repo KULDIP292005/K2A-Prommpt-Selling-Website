@@ -1,0 +1,83 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 0. Global Deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isEmailVerified() {
+      return request.auth.token.email_verified == true;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.email == 'kuldippushpad1@gmail.com';
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Validation Blueprints
+    function isValidPrompt(data) {
+      return data.title is string && data.title.size() <= 100 &&
+             data.description is string && data.description.size() <= 500 &&
+             data.fullPrompt is string && data.fullPrompt.size() <= 5000 &&
+             data.price is string && data.price.size() <= 20 &&
+             data.category in ['Admin Panel', 'Games', 'E-commerce', 'Tools'] &&
+             data.image is string && data.image.size() <= 500 &&
+             data.features is list && data.features.size() <= 20 &&
+             data.tools is list && data.tools.size() <= 20 &&
+             (data.get('isFree', false) is bool);
+    }
+
+    function isValidUser(data) {
+      return data.email is string && data.email.size() <= 100 &&
+             (data.get('isAdmin', false) is bool) &&
+             (data.get('purchasedPrompts', []) is list);
+    }
+
+    // 1. Prompts Collection
+    match /prompts/{promptId} {
+      allow read: if true; // Public marketplace
+      
+      allow create: if isAdmin() && isValidPrompt(incoming());
+      
+      allow update: if isAdmin() && isValidPrompt(incoming());
+      
+      allow delete: if isAdmin();
+    }
+
+    // 2. Users Collection
+    match /users/{userId} {
+      allow get: if isOwner(userId) || isAdmin();
+      allow list: if isAdmin(); // Only admin can list users
+      
+      allow create: if isOwner(userId) && isValidUser(incoming()) && 
+                    (incoming().isAdmin == false || (incoming().isAdmin == true && isAdmin()));
+      
+      allow update: if (isOwner(userId) && 
+                        isValidUser(incoming()) && 
+                        (incoming().isAdmin == existing().isAdmin || (incoming().isAdmin == true && isAdmin())) &&
+                        incoming().email == existing().email) || 
+                    isAdmin();
+    }
+  }
+}
