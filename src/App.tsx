@@ -747,6 +747,15 @@ export default function App() {
         </main>
         <BottomNav />
 
+        {/* Sticky Ad Banner */}
+        <div className="fixed bottom-20 md:bottom-4 left-0 w-full flex justify-center z-[40] pointer-events-none">
+          <div className="glass p-1 rounded-lg pointer-events-auto shadow-xl scale-75 sm:scale-100 origin-bottom">
+            <div id="ad-container-320-50" className="min-w-[320px] min-h-[50px] bg-slate-800/50 rounded flex items-center justify-center text-[10px] text-slate-500 uppercase tracking-widest font-bold">
+              Advertisement
+            </div>
+          </div>
+        </div>
+
         {/* Global Toast */}
         <AnimatePresence>
             {toast && (
